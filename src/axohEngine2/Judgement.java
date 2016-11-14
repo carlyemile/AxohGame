@@ -52,6 +52,8 @@ import axohEngine2.project.OPTION;
 import axohEngine2.project.State;
 import axohEngine2.project.TYPE;
 import axohEngine2.project.TitleMenu;
+import axohEngine2.util.RectangleCollider2D;
+import axohEngine2.util.Vector2D;
 
 //Start class by also extending the 'Game.java' engine interface
 public class Judgement extends Game {
@@ -119,7 +121,7 @@ public class Judgement extends Game {
 	private int attackCounter; 
 	private int sheathCounter; 
 	private int spawnRate = 10;
-	private int scoreCounter = 0;
+	public int score = 0;
 	private LinkedList<Enemy> enemies;
 	//----------- Game  -----------------
 	//SpriteSheets (To be split in to multiple smaller sprites)
@@ -288,7 +290,8 @@ public class Judgement extends Game {
 		if (camFollow) {
 			camera.track(player);
 			attackCounter++; 
-			sheathCounter++; 
+			sheathCounter++;
+			score++;
 			//camera.setLocation(player.getXLoc(), player.getYLoc());
 			//camera.setLocation(player.getXLoc() + player.getSpriteSize() / 2 - CENTERX, player.getYLoc() + player.getSpriteSize() / 2 - CENTERY);
 		}
@@ -330,10 +333,10 @@ public class Judgement extends Game {
 			for (int i = 0; i < enemies.size(); i++)
 				enemies.get(i).renderMob();
 			
-			//g2d.setColor(Color.GREEN);
-			//g2d.drawString("Health: " + inMenu.getHealth(), CENTERX - 650, CENTERY - 370);
-			//g2d.setColor(Color.MAGENTA);
-			//g2d.drawString("Magic: " + inMenu.getMagic(), CENTERX - 650, CENTERY - 310);
+			g2d.setColor(Color.GREEN);
+			g2d.drawString("Health: " + inMenu.getHealth(), CENTERX - 650, CENTERY - 370);
+			g2d.setColor(Color.WHITE);
+			g2d.drawString("Score: " + score/60, CENTERX - 650, CENTERY - 310);
 			//g2d.setColor(Color.RED);
 			//g2d.drawString("NPC health: " + currentOverlay.accessTile(98).mob().health(), CENTERX - 650, CENTERY - 250);
 		}
@@ -456,19 +459,31 @@ public class Judgement extends Game {
 		for (AnimatedSprite a : sprites()) {
 			if (a instanceof Mob) {
 				Mob mob = (Mob) a;
+				//System.out.println(mob.getPosition());
+
+				// Vector2D v = new Vector2D();
 				for (Tile b : tiles()) {
 					if (b.isSolid()) {
-						double finalX = mob.getXLoc() + mob.getXVel();
-						double finalY = mob.getYLoc() + mob.getYVel();
-						double right = Math.min(finalX + (double) a.getSpriteSize(), b.getXLoc() + (double) b.getSpriteSize());
+						double finalX = mob.getXLoc();
+						double finalY = mob.getYLoc();
+						double right = Math.min(finalX + mob.collider.getWidth(), b.getXLoc() + (double) b.getSpriteSize());
 						double left = Math.max(finalX, b.getXLoc());
-						double down = Math.min(finalY + (double) a.getSpriteSize(), b.getYLoc() + (double) b.getSpriteSize());
+						double down = Math.min(finalY + mob.collider.getHeight(), b.getYLoc() + (double) b.getSpriteSize());
 						double up = Math.max(finalY, b.getYLoc());
 						double overlapX = right - left;
 						double overlapY = down - up;
 						if (overlapX > 0 && overlapY > 0) {
-							double centerX = finalX + (double) a.getSpriteSize() * 0.5;
-							double centerY = finalY + (double) a.getSpriteSize() * 0.5;
+							/*Vector2D normal = null;
+							double normalX = 0;
+							double normalY = 0;
+							try {
+								normal = new RectangleCollider2D(b.getXLoc() - finalX, b.getYLoc() - finalY, (double) b.getSpriteSize(), (double) b.getSpriteSize()).rectCast(mob.collider, mob.getXVel(), mob.getYVel()).getNormal();
+								normalX = normal.getX();
+								normalY = normal.getY();
+							} catch(Exception e) {continue;}
+							System.out.println(normal);
+							double centerX = finalX + mob.collider.getCenterX() * 0.5;
+							double centerY = finalY + mob.collider.getCenterY() * 0.5;
 							double tileCenterX = b.getXLoc() + (double) b.getSpriteSize() * 0.5;
 							double tileCenterY = b.getYLoc() + (double) b.getSpriteSize() * 0.5;
 							double angle = Math.atan2(centerY - tileCenterY, centerX - tileCenterX);
@@ -483,6 +498,14 @@ public class Judgement extends Game {
 								normalY = normalY > 0.0 ? 1.0 : -1.0;
 							} else {
 								normalY = 0.0;
+							}*/
+							double normalX = 0;
+							double normalY = 0;
+							if (mob.getXLoc() <= mob.collider.getWidth() || mob.getXLoc() >= 2432 - mob.collider.getWidth()) {
+								normalX = mob.getXLoc() <= mob.collider.getWidth() ? 1 : -1;
+							}
+							if (mob.getYLoc() <= mob.collider.getHeight() || mob.getYLoc() >= 1024 - mob.collider.getHeight()) {
+								normalY = mob.getYLoc() <= mob.collider.getHeight() ? 1 : -1;
 							}
 							double offX = overlapX * normalX;
 							double offY = overlapY * normalY;
@@ -495,12 +518,16 @@ public class Judgement extends Game {
 								adjY = mob.getYVel() * overlapX / mob.getXVel() * normalX;
 							}
 							mob.setLoc(finalX + offX + adjX, finalY + offY + adjY);
+							mob.move(mob.getXVel() * Math.abs(normalY), mob.getYVel() * Math.abs(normalX));
 							//mob.velocity.setX(mob.getXVel() * Math.abs(normalY) * 0.1);
 							//mob.velocity.setY(mob.getYVel() * Math.abs(normalX) * 0.1);
-							mob.setLoc(mob.getXLoc() + mob.getXVel() * Math.abs(normalY) * 0.1, mob.getYLoc() + mob.getYVel() * Math.abs(normalX) * 0.1);
+							//mob.setLoc(mob.getXLoc() + mob.getXVel() * Math.abs(normalY) * 0.1, mob.getYLoc() + mob.getYVel() * Math.abs(normalX) * 0.1);
+							//v.add(overlapX * Math.abs(normalY), overlapY * Math.abs(normalX));
+							//mob.setLoc(mob.getXLoc() + offX, mob.getYLoc() + offY);
 						}
 					}
 				}
+				//mob.setLoc(mob.getXLoc() + v.getX(), mob.getYLoc() + v.getY());
 			}
 		}
 	}
@@ -672,8 +699,8 @@ public class Judgement extends Game {
 		}
 	}
 	public void checkInput() {
-		int xa = 0;
-		int ya = 0;
+		double xa = 0;
+		double ya = 0;
 		
 	
 		/********************************************
