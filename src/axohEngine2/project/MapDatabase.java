@@ -158,7 +158,7 @@ public class MapDatabase {
 								   b, b, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, b, b,
 								   b, b, g, g, g, g, g, g, g, r, g, r, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, b, b,
 								   b, b, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, b, b,
-								   b, b, g, g, g, g, g, g, g, r, g, r, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, b, b,
+								   b, b, g, g, g, g, g, g, g, r, g, r, g, g, g, g, g, g, b, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, b, b,
 								   b, b, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, b, b,
 								   b, b, g, g, g, g, g, g, g, r, g, r, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, b, b,
 								   b, b, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, b, b,

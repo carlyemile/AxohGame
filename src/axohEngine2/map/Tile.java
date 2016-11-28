@@ -24,6 +24,7 @@ import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.Mob;
 import axohEngine2.entities.SpriteSheet;
 import axohEngine2.project.TYPE;
+import axohEngine2.util.RectangleCollider2D;
 import axohEngine2.util.Vector2D;
 
 public class Tile extends AnimatedSprite {
@@ -42,6 +43,8 @@ public class Tile extends AnimatedSprite {
 	//event and mob - Variables that hold objects stored in the tile which can be accessed and/or changed in that tile
 	private Event event;
 	private Mob mob;
+	
+	public RectangleCollider2D collider;
 	
 	/*hasProperty - boolean to check if a tile has a property like solidity, this is here to make sure so many multiple checks 
 	are done on each tile. So if a plain tile is checked in the game loop, it can be passed over without mny additional checks.*/
@@ -65,6 +68,7 @@ public class Tile extends AnimatedSprite {
 		_breakable = false;
 		position = new Vector2D();
 		setSprite(sheet, spriteNumber); //Set the object image to 
+		collider = new RectangleCollider2D(0, 0, (double) getSpriteSize(), (double) getSpriteSize());
 	}
 	
 	/**************************************************************************
@@ -88,7 +92,7 @@ public class Tile extends AnimatedSprite {
 		if(solid) hasProperty = true;
 		//setSolid(solid); //In Sprite super class, set solid
 		setSprite(sheet, spriteNumber);
-		
+		collider = new RectangleCollider2D(0, 0, (double) getSpriteSize(), (double) getSpriteSize());
 	}
 	
 	
@@ -114,6 +118,7 @@ public class Tile extends AnimatedSprite {
 		//setSolid(solid);
 		if(solid || slippery || breakable) hasProperty = true;
 		setSprite(getSheet(), getSpriteNumber());
+		collider = new RectangleCollider2D(0, 0, (double) getSpriteSize(), (double) getSpriteSize());
 	}
 	
 	/*********************************************************************
@@ -136,6 +141,7 @@ public class Tile extends AnimatedSprite {
 		
 		//setSolid(_solid);
 		setSprite(tile.getSheet(), tile.getSpriteNumber());
+		collider = new RectangleCollider2D(0, 0, (double) tile.getSpriteSize(), (double) tile.getSpriteSize());
 	}
 	
 	/*******************************************************************
@@ -212,7 +218,7 @@ public class Tile extends AnimatedSprite {
 		g2d.drawRect(finalX, finalY, getSpriteSize(), getSpriteSize());
 		if (isSolid()) {
 			g2d.setColor(new Color(1f, 0, 0, 0.5f));
-			g2d.fillRect(finalX, finalY, getSpriteSize(), getSpriteSize());
+			g2d.fillRect(finalX, finalY, (int) collider.getWidth(), (int) collider.getHeight());
 		}
 		position.setX(x);
 		position.setY(y);
@@ -236,7 +242,7 @@ public class Tile extends AnimatedSprite {
 	 ****************************************************************************/
 	public Rectangle getTileBounds() {
 		Rectangle r;
-		r = new Rectangle((int)position.getX(), (int)position.getY(), getSpriteSize(), getSpriteSize());
+		r = new Rectangle((int)position.getX(), (int)position.getY(), (int) collider.getWidth(), (int) collider.getHeight());
 		return r;
 	}
 }
