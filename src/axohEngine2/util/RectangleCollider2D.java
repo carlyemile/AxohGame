@@ -78,6 +78,7 @@ public class RectangleCollider2D extends Rectangle2D {
 					Point2D[] points = getIntersectedPoints(line);
 					for (Point2D p : points) {
 						double potentialLargestDistance = p.distance(line.getP1());
+						System.out.println(p);
 						if (potentialLargestDistance > smallestDistance) {
 							closestLine = line;
 							closestPoint = p;

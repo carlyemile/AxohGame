@@ -157,7 +157,7 @@ public class Judgement extends Game {
 	 * Set up the super class Game and set the window to appear
 	 **********************************************************************/
 	public Judgement() {
-		super(10, SCREENWIDTH, SCREENHEIGHT);
+		super(130, SCREENWIDTH, SCREENHEIGHT);
 		camera = new Camera();
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -466,8 +466,8 @@ public class Judgement extends Game {
 				// Vector2D v = new Vector2D();
 				for (Tile tile : tiles()) {
 					if (tile.isSolid()) {
-						double finalX = mob.getXLoc() + mob.getXVel();
-						double finalY = mob.getYLoc() + mob.getYVel();
+						double finalX = mob.getXLoc();
+						double finalY = mob.getYLoc();
 						double right = Math.min(finalX + mob.collider.getWidth(), tile.getXLoc() + (double) tile.getSpriteSize());
 						double left = Math.max(finalX, tile.getXLoc());
 						double down = Math.min(finalY + mob.collider.getHeight(), tile.getYLoc() + (double) tile.getSpriteSize());
@@ -480,7 +480,7 @@ public class Judgement extends Game {
 							Vector2D normal = null;
 							try {
 								//normal = new RectangleCollider2D(tile.getXLoc() - finalX, tile.getYLoc() - finalY, (double) tile.getSpriteSize(), (double) tile.getSpriteSize()).rectCast(mob.collider, mob.getXVel(), mob.getYVel()).getNormal();
-								normal = new RectangleCollider2D((mob.getXLoc() + mob.collider.getX()) - tile.getXLoc(), (mob.getYLoc() + mob.collider.getY()) - tile.getYLoc(), mob.collider.getWidth(), mob.collider.getHeight()).castAgainst(tile.collider, mob.getXVel(), mob.getYVel()).getNormal();
+								normal = new RectangleCollider2D((mob.getXLoc() + mob.collider.getX()) - tile.getXLoc(), (mob.getYLoc() + mob.collider.getY()) - tile.getYLoc(), mob.collider.getWidth(), mob.collider.getHeight()).castAgainst(tile.collider, -mob.getXVel(), -mob.getYVel()).getNormal();
 								normalX = normal.getX();
 								normalY = normal.getY();
 							} catch (Exception e) {
@@ -522,7 +522,7 @@ public class Judgement extends Game {
 							if (Math.abs(mob.getXVel()) > 0) {
 								adjY = mob.getYVel() * overlapX / mob.getXVel() * normalX;
 							}
-							mob.setLoc(mob.getXLoc() + offX + adjX, mob.getYLoc() + offY + adjY);
+							mob.setLoc(finalX + offX + adjX, finalY + offY + adjY);
 							//mob.move(mob.getXVel() * Math.abs(normalY), mob.getYVel() * Math.abs(normalX));
 							//mob.velocity.setX(mob.getXVel() * Math.abs(normalY) * 0.1);
 							//mob.velocity.setY(mob.getYVel() * Math.abs(normalX) * 0.1);
