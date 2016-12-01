@@ -46,6 +46,7 @@ import axohEngine2.entities.Mob;
 import axohEngine2.entities.SpriteSheet;
 import axohEngine2.map.Map;
 import axohEngine2.map.Tile;
+import axohEngine2.project.GameOver;
 import axohEngine2.project.InGameMenu;
 import axohEngine2.project.MapDatabase;
 import axohEngine2.project.OPTION;
@@ -120,8 +121,9 @@ public class Judgement extends Game {
 	private boolean waitOn = false;
 	private int attackCounter; 
 	private int sheathCounter; 
-	private int spawnRate = 10;
+	private int spawnRate = 20;
 	public int score = 0;
+	private int scoreCounter = 0;
 	private LinkedList<Enemy> enemies;
 	//----------- Game  -----------------
 	//SpriteSheets (To be split in to multiple smaller sprites)
@@ -139,6 +141,7 @@ public class Judgement extends Game {
 	//Menu classes
 	TitleMenu title;
 	InGameMenu inMenu;
+	GameOver gameOver;
 	
 	//Animated sprites
 	AnimatedSprite titleArrow;
@@ -162,7 +165,7 @@ public class Judgement extends Game {
 		//plays music file at the beginning of the game. 
 		//The music file must be .wav file
 		try {
-			JavaAudioPlaySoundExample("/background.wav"); 
+			//JavaAudioPlaySoundExample("/background.wav"); 
 			}
 		catch(Exception ex) {
 			
@@ -215,6 +218,7 @@ public class Judgement extends Game {
         //*****Initialize Menus***************************************************************************
 		title = new TitleMenu(titleMenu, titleMenu2, controls, titleArrow, SCREENWIDTH, SCREENHEIGHT, simple, bold, bigBold);
 		inMenu = new InGameMenu(inGameMenu, SCREENWIDTH, SCREENHEIGHT);
+		gameOver = new GameOver();
 		
 		//****Initialize and setup Mobs*********************************************************************
 		player = new Hero(this, graphics(), mainCharacter, 40, "mainC");
@@ -283,6 +287,13 @@ public class Judgement extends Game {
 		enemies.get(i).move(dx, dy);
 		}
 		
+
+		if (player.health()==0){
+			setGameState(State.GAMEOVER);
+		}
+		
+		
+		
 		//Update certain specifics based on certain game States
 		if(getGameState() == State.TITLE) title.update(option, titleLocation); //Title Menu update
 		if(getGameState() == State.INGAMEMENU) inMenu.update(option, isSaved(), sectionLoc, player.health()); //In Game Menu update
@@ -292,6 +303,7 @@ public class Judgement extends Game {
 			attackCounter++; 
 			sheathCounter++;
 			score++;
+			
 			//camera.setLocation(player.getXLoc(), player.getYLoc());
 			//camera.setLocation(player.getXLoc() + player.getSpriteSize() / 2 - CENTERX, player.getYLoc() + player.getSpriteSize() / 2 - CENTERY);
 		}
@@ -351,6 +363,9 @@ public class Judgement extends Game {
 			title.render(this, g2d, titleX, titleY, titleX2, titleY2);
 		}
 		
+		if (getGameState() == State.GAMEOVER){
+			gameOver.render(this, g2d);
+		}
 		//Render save time specific writing
 		if(option == OPTION.SAVE){
 			drawString(g2d, "Are you sure you\n  would like to save?", 660, 400);
@@ -358,6 +373,7 @@ public class Judgement extends Game {
 		if(wasSaving && wait > 0) {
 			g2d.drawString("Game Saved!", 700, 500);
 		}
+		
 	}
 	
 	/*******************************************************************
@@ -1038,8 +1054,34 @@ public class Judgement extends Game {
 				inputWait = 8;
 			}
 		}
+		if (getGameState()==State.GAMEOVER){
+			if(keyEnter){
+				setGameState(State.GAME);
+				keyEnter = false;
+				resetGame();
+			}
+			
+			if(keyBack){
+				setGameState(State.TITLE);
+				keyBack = false;
+				//resets the title arrow's positions and animation
+				titleX = 530;
+				titleY = 610;
+				titleX2 = 340;
+				titleY2 = 310;
+				titleLocation = 0;
+		
+				titleArrow.loadAnim(4, 10);
+				sprites().add(titleArrow);
+				
+			}
+				
+		}
 		inputWait--;
 	}
+	
+	
+	
 	
 	/**
 	 * Inherited method
@@ -1228,6 +1270,7 @@ public class Judgement extends Game {
 					setIsSpawning(true);
 				    spawnEnemy();
 				    setIsSpawning(false);
+					
 				  }
 				}, 0, spawnRate*1000);
 			 
@@ -1236,12 +1279,28 @@ public class Judgement extends Game {
 	 } //end load method
 
 	public void checkScore(){
-		/**
-		if (score-scoreCounter == 100){
+		
+		if (score-scoreCounter == 20){
 			spawnRate-= 3;
 			scoreCounter = score;
+			player.setHealth(0);
+
 	}
-	*/
+	
+	}
+	
+	public void resetGame(){
+		sprites().clear();
+		enemies.clear();
+		score = 0;
+		scoreCounter = 0;
+		spawnRate = 20;
+		player.setHealth(35);
+		player.setLoc(1250,500);
+		sprites().add(player);
+		
+
+		
 	}
 	
 	/************
@@ -1269,5 +1328,7 @@ public class Judgement extends Game {
 			enemies.add(enemy);
 			sprites().add(enemy);
 			}
+	 
+	
 
 } //end class

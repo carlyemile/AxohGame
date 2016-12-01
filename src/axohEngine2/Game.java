@@ -113,6 +113,7 @@ public abstract class Game extends JFrame implements Runnable, KeyListener, Mous
 		gameStates.put(State.GAME, new GameTransition(this));
 		gameStates.put(State.TITLE, new TitleMenuTransition(this));
 		gameStates.put(State.INGAMEMENU, new GameMenuTransition(this));
+		gameStates.put(State.GAMEOVER, new GameMenuTransition(this));
 		return gameStates;
 	}
 

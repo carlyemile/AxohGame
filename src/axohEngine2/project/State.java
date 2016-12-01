@@ -16,5 +16,6 @@ public enum State {
 	INGAMEMENU,
 	GAME,
 	TITLE,
-	PAUSE
+	PAUSE,
+	GAMEOVER
 };

@@ -39,7 +39,7 @@ public class Enemy extends Mob{
 		this.g2d = g2d;
 		this.ai = ai; 
 		setName(name);
-		health = 0;
+		health = 20;
 		setAlive(true);
 		setSpriteType(ai);
 		setPosition(new Vector2D());
@@ -117,6 +117,8 @@ public class Enemy extends Mob{
 	
 	//Setters for current health, ai, name and speed
 	public void setHealth(int health) { this.health = health; }
+	
+	public int getHealth(){ return health;}
 	public void setAi(TYPE ai) { this.ai = TYPE.RANDOMPATH; }
 	public void setName(String name) { super._name = name; }
 	public void setSpeed(double speed) {
