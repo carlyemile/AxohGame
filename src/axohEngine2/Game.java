@@ -289,6 +289,7 @@ public abstract class Game extends JFrame implements Runnable, KeyListener, Mous
 				updateSprites();
 				if (!isSpawning)
 					handleCollisions();
+				step();
 			}
 
 			//Render the graphics
@@ -299,6 +300,8 @@ public abstract class Game extends JFrame implements Runnable, KeyListener, Mous
 
 
 	protected abstract void handleCollisions();
+	
+	protected abstract void step();
 
 	//End the game with this method call
 	public void stop() {

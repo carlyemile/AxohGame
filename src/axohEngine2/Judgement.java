@@ -229,7 +229,7 @@ public class Judgement extends Game {
 		player.getAttack("sword").addInOutAnim(16, 24, 8, 0, 1, 10);
 		player.setCurrentAttack("sword"); //Starting attack
 		player.setHealth(35); //If you change the starting max health, dont forget to change it in inGameMenu.java max health also
-		player.setSpeed(6.0);
+		player.setSpeed(100.0);
 		sprites().add(player);
 		player.setLoc(1250,500);
 		//player.boundsOffset = new Point(200,200);
@@ -466,8 +466,8 @@ public class Judgement extends Game {
 				// Vector2D v = new Vector2D();
 				for (Tile tile : tiles()) {
 					if (tile.isSolid()) {
-						double finalX = mob.getXLoc();
-						double finalY = mob.getYLoc();
+						double finalX = mob.getXLoc() + mob.getXVel();
+						double finalY = mob.getYLoc() + mob.getYVel();
 						double right = Math.min(finalX + mob.collider.getWidth(), tile.getXLoc() + (double) tile.getSpriteSize());
 						double left = Math.max(finalX, tile.getXLoc());
 						double down = Math.min(finalY + mob.collider.getHeight(), tile.getYLoc() + (double) tile.getSpriteSize());
@@ -480,7 +480,7 @@ public class Judgement extends Game {
 							Vector2D normal = null;
 							try {
 								//normal = new RectangleCollider2D(tile.getXLoc() - finalX, tile.getYLoc() - finalY, (double) tile.getSpriteSize(), (double) tile.getSpriteSize()).rectCast(mob.collider, mob.getXVel(), mob.getYVel()).getNormal();
-								normal = new RectangleCollider2D((mob.getXLoc() + mob.collider.getX()) - tile.getXLoc(), (mob.getYLoc() + mob.collider.getY()) - tile.getYLoc(), mob.collider.getWidth(), mob.collider.getHeight()).castAgainst(tile.collider, -mob.getXVel(), -mob.getYVel()).getNormal();
+								normal = new RectangleCollider2D((finalX + mob.collider.getX()) - tile.getXLoc(), (finalY + mob.collider.getY()) - tile.getYLoc(), mob.collider.getWidth(), mob.collider.getHeight()).castAgainst(tile.collider, -mob.getXVel(), -mob.getYVel()).getNormal();
 								normalX = normal.getX();
 								normalY = normal.getY();
 							} catch (Exception e) {
@@ -522,7 +522,8 @@ public class Judgement extends Game {
 							if (Math.abs(mob.getXVel()) > 0) {
 								adjY = mob.getYVel() * overlapX / mob.getXVel() * normalX;
 							}
-							mob.setLoc(finalX + offX + adjX, finalY + offY + adjY);
+							mob.move(0, 0);
+							//mob.move(mob.getXLoc() + offX + adjX, mob.getYLoc() + offY + adjY);
 							//mob.move(mob.getXVel() * Math.abs(normalY), mob.getYVel() * Math.abs(normalX));
 							//mob.velocity.setX(mob.getXVel() * Math.abs(normalY) * 0.1);
 							//mob.velocity.setY(mob.getYVel() * Math.abs(normalX) * 0.1);
@@ -1278,5 +1279,14 @@ public class Judgement extends Game {
 			enemies.add(enemy);
 			sprites().add(enemy);
 			}
+
+	@Override
+	protected void step() {
+		// TODO Auto-generated method stub
+		player.step();
+		for (Mob m : enemies) {
+			m.step();
+		}
+	}
 
 } //end class

@@ -1,5 +1,9 @@
 package axohEngine2.util;
 
+import axohEngine2.util.Line2D;
+import axohEngine2.util.Point2D;
+import axohEngine2.util.Rectangle2D;
+
 public class Line2D extends java.awt.geom.Line2D {
 	
 	private Point2D a;
@@ -43,10 +47,10 @@ public class Line2D extends java.awt.geom.Line2D {
 			return null;
 		}
 		double x;
-		if (m1 == java.lang.Double.POSITIVE_INFINITY || m2 == java.lang.Double.POSITIVE_INFINITY) {
+		if (Math.abs(m1) == java.lang.Double.POSITIVE_INFINITY || Math.abs(m2) == java.lang.Double.POSITIVE_INFINITY) {
 			// If one of the two lines' slope is undefined, set the intersection's x position to that
 			// line's x position.
-			x = m1 == java.lang.Double.POSITIVE_INFINITY ? getX1() : otherLine.getX1();
+			x = Math.abs(m1) == java.lang.Double.POSITIVE_INFINITY ? getX1() : otherLine.getX1();
 		} else {
 			double b1 = getIntercept();
 			double b2 = otherLine.getIntercept();
@@ -58,7 +62,7 @@ public class Line2D extends java.awt.geom.Line2D {
 			// If one of the two lines' slope is 0, set the intersection's y to that line's y position.
 		//	y = m1 == 0 ? getY1() : otherLine.getY1();
 		//} else {
-		if (m1 == java.lang.Double.POSITIVE_INFINITY) {
+		if (Math.abs(m1) == java.lang.Double.POSITIVE_INFINITY) {
 			y = otherLine.getYAt(x);
 		} else {
 			y = getYAt(x);
