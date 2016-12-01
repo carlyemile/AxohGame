@@ -165,7 +165,7 @@ public class Judgement extends Game {
 		//plays music file at the beginning of the game. 
 		//The music file must be .wav file
 		try {
-			//JavaAudioPlaySoundExample("/background.wav"); 
+			JavaAudioPlaySoundExample("/background.wav"); 
 			}
 		catch(Exception ex) {
 			
