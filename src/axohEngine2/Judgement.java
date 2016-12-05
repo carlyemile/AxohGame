@@ -1278,12 +1278,13 @@ public class Judgement extends Game {
 		 } //end file is not empty check
 	 } //end load method
 
+	 
+	 //Elephants spawn faster every 20 points
 	public void checkScore(){
 		
-		if (score-scoreCounter == 20){
+		if (score-scoreCounter >= 20){
 			spawnRate-= 3;
 			scoreCounter = score;
-			player.setHealth(0);
 
 	}
 	
