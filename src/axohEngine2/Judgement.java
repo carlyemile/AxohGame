@@ -125,6 +125,9 @@ public class Judgement extends Game {
 	public int score = 0;
 	private int scoreCounter = 0;
 	private LinkedList<Enemy> enemies;
+	
+	public static boolean spawnEnemies = false;
+	
 	//----------- Game  -----------------
 	//SpriteSheets (To be split in to multiple smaller sprites)
 	SpriteSheet extras1;
@@ -230,7 +233,7 @@ public class Judgement extends Game {
 		player.getAttack("sword").addInOutAnim(16, 24, 8, 0, 1, 10);
 		player.setCurrentAttack("sword"); //Starting attack
 		player.setHealth(35); //If you change the starting max health, dont forget to change it in inGameMenu.java max health also
-		player.setSpeed(6.0);
+		player.setSpeed(100.0);
 		sprites().add(player);
 		player.setLoc(1250,500);
 		//player.boundsOffset = new Point(200,200);
@@ -476,29 +479,31 @@ public class Judgement extends Game {
 			if (a instanceof Mob) {
 				Mob mob = (Mob) a;
 				//System.out.println(mob.getPosition());
-
 				// Vector2D v = new Vector2D();
-				for (Tile b : tiles()) {
-					if (b.isSolid()) {
-						double finalX = mob.getXLoc();
-						double finalY = mob.getYLoc();
-						double right = Math.min(finalX + mob.collider.getWidth(), b.getXLoc() + (double) b.getSpriteSize());
-						double left = Math.max(finalX, b.getXLoc());
-						double down = Math.min(finalY + mob.collider.getHeight(), b.getYLoc() + (double) b.getSpriteSize());
-						double up = Math.max(finalY, b.getYLoc());
+				for (Tile tile : tiles()) {
+					if (tile.isSolid()) {
+						double finalX = mob.getXLoc() + mob.getXVel();
+						double finalY = mob.getYLoc() + mob.getYVel();
+						double right = Math.min(finalX + mob.collider.getWidth(), tile.getXLoc() + (double) tile.getSpriteSize());
+						double left = Math.max(finalX, tile.getXLoc());
+						double down = Math.min(finalY + mob.collider.getHeight(), tile.getYLoc() + (double) tile.getSpriteSize());
+						double up = Math.max(finalY, tile.getYLoc());
 						double overlapX = right - left;
 						double overlapY = down - up;
 						if (overlapX > 0 && overlapY > 0) {
-							/*Vector2D normal = null;
 							double normalX = 0;
 							double normalY = 0;
+							Vector2D normal = null;
 							try {
-								normal = new RectangleCollider2D(b.getXLoc() - finalX, b.getYLoc() - finalY, (double) b.getSpriteSize(), (double) b.getSpriteSize()).rectCast(mob.collider, mob.getXVel(), mob.getYVel()).getNormal();
+								//normal = new RectangleCollider2D(tile.getXLoc() - finalX, tile.getYLoc() - finalY, (double) tile.getSpriteSize(), (double) tile.getSpriteSize()).rectCast(mob.collider, mob.getXVel(), mob.getYVel()).getNormal();
+								normal = new RectangleCollider2D((finalX + mob.collider.getX()) - tile.getXLoc(), (finalY + mob.collider.getY()) - tile.getYLoc(), mob.collider.getWidth(), mob.collider.getHeight()).castAgainst(tile.collider, -mob.getXVel(), -mob.getYVel()).getNormal();
 								normalX = normal.getX();
 								normalY = normal.getY();
-							} catch(Exception e) {continue;}
+							} catch (Exception e) {
+								continue;
+							}
 							System.out.println(normal);
-							double centerX = finalX + mob.collider.getCenterX() * 0.5;
+							/*double centerX = finalX + mob.collider.getCenterX() * 0.5;
 							double centerY = finalY + mob.collider.getCenterY() * 0.5;
 							double tileCenterX = b.getXLoc() + (double) b.getSpriteSize() * 0.5;
 							double tileCenterY = b.getYLoc() + (double) b.getSpriteSize() * 0.5;
@@ -514,15 +519,15 @@ public class Judgement extends Game {
 								normalY = normalY > 0.0 ? 1.0 : -1.0;
 							} else {
 								normalY = 0.0;
-							}*/
-							double normalX = 0;
-							double normalY = 0;
+							}
+							*/
+							/*
 							if (mob.getXLoc() <= mob.collider.getWidth() || mob.getXLoc() >= 2432 - mob.collider.getWidth()) {
 								normalX = mob.getXLoc() <= mob.collider.getWidth() ? 1 : -1;
 							}
 							if (mob.getYLoc() <= mob.collider.getHeight() || mob.getYLoc() >= 1024 - mob.collider.getHeight()) {
 								normalY = mob.getYLoc() <= mob.collider.getHeight() ? 1 : -1;
-							}
+							}*/
 							double offX = overlapX * normalX;
 							double offY = overlapY * normalY;
 							double adjX = 0;
@@ -533,8 +538,9 @@ public class Judgement extends Game {
 							if (Math.abs(mob.getXVel()) > 0) {
 								adjY = mob.getYVel() * overlapX / mob.getXVel() * normalX;
 							}
-							mob.setLoc(finalX + offX + adjX, finalY + offY + adjY);
-							mob.move(mob.getXVel() * Math.abs(normalY), mob.getYVel() * Math.abs(normalX));
+							mob.move(0, 0);
+							//mob.move(mob.getXLoc() + offX + adjX, mob.getYLoc() + offY + adjY);
+							//mob.move(mob.getXVel() * Math.abs(normalY), mob.getYVel() * Math.abs(normalX));
 							//mob.velocity.setX(mob.getXVel() * Math.abs(normalY) * 0.1);
 							//mob.velocity.setY(mob.getYVel() * Math.abs(normalX) * 0.1);
 							//mob.setLoc(mob.getXLoc() + mob.getXVel() * Math.abs(normalY) * 0.1, mob.getYLoc() + mob.getYVel() * Math.abs(normalX) * 0.1);
@@ -752,7 +758,9 @@ public class Judgement extends Game {
 		
 			//I(Inventory)
 			if(keyInventory) {
-				setGameState(State.INGAMEMENU);
+				System.out.println("x: 1152.0, y: 578");
+				System.out.println(player.getPosition());
+				//setGameState(State.INGAMEMENU);
 				inputWait = 10;
 			}
 			
@@ -1268,7 +1276,9 @@ public class Judgement extends Game {
 				  @Override
 				  public void run() {
 					setIsSpawning(true);
-				    spawnEnemy();
+					if (spawnEnemies) {
+						spawnEnemy();
+					}
 				    setIsSpawning(false);
 					
 				  }
@@ -1331,5 +1341,14 @@ public class Judgement extends Game {
 			}
 	 
 	
+
+	@Override
+	protected void step() {
+		// TODO Auto-generated method stub
+		player.step();
+		for (Mob m : enemies) {
+			m.step();
+		}
+	}
 
 } //end class

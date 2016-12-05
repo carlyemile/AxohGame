@@ -241,16 +241,9 @@ public class Mob extends AnimatedSprite{
 		
 	}
 	
-	/***************************************************************
-	 * Method used to change a mobs position by the xa and ya parameters.
-	 * This also updates a mobs aniamtion based on what direction is is moving
-	 * in. Four animations are needed for a full moving sprite.
-	 * 
-	 * @param xa - Int movement in pixels on the x axis
-	 * @param ya - Int movement in pixels on the y axis
-	 ****************************************************************/
-	public void move(double xa, double ya) {
-		velocity.setLocation(xa, ya);
+	public void step() {
+		double xa = velocity.getX();
+		double ya = velocity.getY();
 		position.setX(position.getX() + xa);
 		position.setY(position.getY() + ya);
 		if(xa < 0) { //left
@@ -284,6 +277,19 @@ public class Mob extends AnimatedSprite{
 			moveDir = DIRECTION.DOWN;
 		}
 		if(xa == 0 && ya == 0) stopAnim();
+		velocity.setLocation(0, 0);
+	}
+	
+	/***************************************************************
+	 * Method used to change a mobs position by the xa and ya parameters.
+	 * This also updates a mobs aniamtion based on what direction is is moving
+	 * in. Four animations are needed for a full moving sprite.
+	 * 
+	 * @param xa - Int movement in pixels on the x axis
+	 * @param ya - Int movement in pixels on the y axis
+	 ****************************************************************/
+	public void move(double xa, double ya) {
+		velocity.setLocation(xa, ya);
 	}
 	
 	/********************************************************************************
